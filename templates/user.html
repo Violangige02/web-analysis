@@ -1,0 +1,42 @@
+<!-- Include this script in your HTML -->
+
+<div>
+    <button id="button_click">track</buttonb>
+</div>
+<script>
+  function trackAnalytics(eventType, eventData) {
+    // Send analytics data to server
+    fetch('/track', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        eventType: eventType,
+        eventData: eventData
+      })
+    }).then(response => {
+      // Handle response
+      console.log('Analytics data sent successfully');
+    }).catch(error => {
+      // Handle error
+      console.error('Error sending analytics data:', error);
+    });
+  }
+
+  // Example usage:
+  document.addEventListener('DOMContentLoaded', function() {
+    // Track page view
+    trackAnalytics('page_view', {
+      pageUrl: window.location.href,
+      pageTitle: document.title
+    });
+
+    // Track button click
+    document.getElementById('myButton').addEventListener('click', function() {
+      trackAnalytics('button_click', {
+        buttonId: 'myButton'
+      });
+    });
+  });
+</script>
