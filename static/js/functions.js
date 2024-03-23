@@ -1,3 +1,5 @@
+
+
 function adminDashboard(){
     
     const body = document.getElementById("main");
@@ -5,7 +7,20 @@ function adminDashboard(){
     <div class="pt-3 pb-2 mb-3 border-bottom">
         <h2>Admin Dashboard</h2>
     </div>
+    <div class="main-content">
+        ${analysisDashboard()}
+    </div>
     `
+    setTimeout(function(){
+        lineChart("activity")
+        chartFunction("deviceChart",["Laptop","Tablet","Mobile"])
+        barChart("currentUser")
+        lineChart("acquisition")
+        roundedChart("hbar1")
+
+    },1119)
+    chartFunction("deviceChart",["Laptop","Tablet","Mobile"])
+    
 }
 
 function applicationManagement(){
@@ -18,7 +33,7 @@ function applicationManagement(){
     <div class="main-content">
         <h6>Your Applications:</h6>
         <div class="flexdisplay" id="myApps">
-           
+       
         </div>
     </div>
     `
@@ -29,9 +44,29 @@ function adminAnalystics(){
     const body = document.getElementById("main")
     body.innerHTML = `
     <div class="pt-3 pb-2 mb-3 border-bottom">
-        <h2>Analystics Dashboard</h2>
+        <h2>App Analystics</h2>
+        <div id="analysis"></div>
     </div>
     `
+    fetchFunction("/getApps",function(data){
+        const select = document.createElement("div")
+        select.setAttribute("style","max-width: 65%;")
+        let html = ''
+        let app = null
+        for(var data of data.apps){
+            html += `<option value='${data._id}'>${data.name}</option>`
+            app = data ? app === null : app
+        }
+        select.innerHTML = `
+        <select class="form-select" >
+            ${html}
+        </select>
+        `
+        
+        document.getElementById("analysis").appendChild(select)
+        appAnalysis(document.getElementById("analysis"),app)
+    })
+    
 }
 
 function adminSettings(){

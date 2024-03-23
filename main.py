@@ -1,11 +1,30 @@
 from flask import Flask,render_template, request, session, jsonify,redirect
-from db import Login,Register,createApp,getApps
+from db import Login,Register,createApp,getApps,getApp
 import json
+import requests
 from keys import Key
 
 app = Flask(__name__)
 
 app.secret_key = "secret key"
+app.config['SERVER_NAME'] = '127.0.0.1:5000'
+ip_key = "d6011f0bfe1b31c177948912cf0b51da"
+@app.route("/get_ip",methods=["POST"])
+def get_ip():
+    ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+    details = requests.get("http://api.ipstack.com/"+ip_address+"?access_key="+ip_key)
+    details = json.loads(details.content)
+    return json.dumps({'address':ip_address,"detail":details})
+
+@app.route("/scripts/js/<id>",methods=["GET","POST"])
+def getScript(id):
+    id = id
+    url = app.config['SERVER_NAME']
+    application = getApp(id)
+    if application is False:
+        return {"error": "App not found",'code':404}
+    application = json.dumps(application, default=str)
+    return render_template("js/script.js",**locals())
 
 @app.route("/")
 def landing():
@@ -78,6 +97,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         result = Login(username,password)
+        print("res",str(result))
         if result != False:
             print(str(result))
             session["user"] = str(result)
@@ -86,4 +106,4 @@ def login():
     return render_template("login.html",msg =msg)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run("0.0.0.0",debug=True)

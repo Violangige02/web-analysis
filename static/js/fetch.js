@@ -1,3 +1,4 @@
+
 const myApplications = async () =>{
    
     
@@ -8,6 +9,9 @@ const myApplications = async () =>{
     })
    .then(response => {
         const body = document.getElementById("myApps")
+        if(response.apps.length === 0){
+            el = "<h4>Once you create an application it will be displayed here</h4>"
+        }
         for(var app of response.apps){
             if(!app.key){continue}
             el += `
@@ -30,7 +34,7 @@ const myApplications = async () =>{
                         </p>
                         <p class="property">
                         <span class="color-2"> Date</span><span>:</span>
-                        <span class="color-1">Date Created </span>;
+                        <span class="color-1">${app.date ? app.date : Date.now()} </span>;
                         </p>
                         
                         <span>}</span>
@@ -47,6 +51,29 @@ const myApplications = async () =>{
    });
    
     
+}
+
+async function fetchFunction(apiUrl,nextFunction){
+   
+    try {
+        
+        const options = {
+        method: 'GET', // Default to GET if method is not provided
+        headers: {
+            'Content-Type':  'application/json', // Set content type to JSON
+            
+        }
+        };
+        /*
+        if (payload) {
+        options.body = JSON.stringify(payload); // Include payload in request body if provided
+        }*/
     
+        const response = await fetch(apiUrl, options);
     
+        const data = await response.json();
+        nextFunction(data); // Send data to the next function
+    } catch (error) {
+        console.error('Error fetching data:', error.message);
+    }
 }

@@ -1,4 +1,5 @@
 import pymongo
+from datetime import datetime
 
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -11,6 +12,8 @@ class myDB:
     def check_collection(self):
         self.users = mydb["users"]
         self.apps = mydb["apps"]
+    def current_time(self):
+        return datetime.now()
     def create_user(self,user):
         x = self.users.insert_one(user)
         return x.inserted_id
@@ -24,7 +27,7 @@ class myDB:
         x = self.apps.find_one({'user':id,'name':name})
         if x:
             return False
-        x = self.apps.insert_one({'user':id,'name':name,'key':key})
+        x = self.apps.insert_one({'user':id,'name':name,'key':key,'date':self.current_time()})
         if x:
             return True
         return False
@@ -32,8 +35,14 @@ class myDB:
         apps = []
         x = self.apps.find({'user':user})
         for i in x:
+            if(i.get("date") == None):
+                i["date"] = self.current_time()
+            
             apps.append(i)
         return apps
+    def get_app(self,id):
+        x = self.apps.find_one({'key':id})
+        return x
     
 def getApps(user):
     if user == None:
@@ -43,6 +52,13 @@ def getApps(user):
     if result:
         return result
     return []
+
+def getApp(id):
+    db = myDB()
+    result = db.get_app(id)
+    if result:
+        return result
+    return False
     
 def createApp(user,name=None,key=None):
     if user == None or name==None or key == None:

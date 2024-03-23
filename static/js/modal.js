@@ -40,9 +40,9 @@ function appModal(){
             </div>
         </div>
         <fieldset aria-hidden="true"><legend style="width: 0px;"><span class="notranslate">&ZeroWidthSpace;</span></legend></fieldset>
-        <div class="v-text-field__slot"><label for="input-371" class="v-label theme--light error--text" style="left: 0px; right: auto; position: absolute;">App Name *</label>
-        <input name="AppName" autofocus="autofocus" type="text" required></div>
-        <div class="v-input__append-inner"><div></div></div></div><div class="v-text-field__details"><div class="v-messages theme--light error--text" role="alert"><div class="v-messages__wrapper"><div class="v-messages__message">Required.</div></div></div></div></div></div>
+        <div class="v-text-field__slot"><label for="input-371" class="v-label theme--light error--text" style="left: 0px; right: auto;">App Name *</label>
+        <input name="AppName" pllaceholder="App Name" autofocus="autofocus" type="text" required></div>
+        </div><div class="v-text-field__details"><div class="v-messages theme--light error--text" role="alert"><div class="v-messages__wrapper"><div class="v-messages__message">Required.</div></div></div></div></div></div>
         <div class="v-input v-input--hide-details theme--light v-input--selection-controls v-input--checkbox"><div class="v-input__control">
 
             

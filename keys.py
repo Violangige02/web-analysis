@@ -7,7 +7,7 @@ class Key:
 	def __init__(self,set=None,role=None,check=None,len=None,key=None):
 		self.keys = keys.split(",")
 		self.result = None
-		length = [18,21,26,32]
+		length = [7,8,9]
 		if len == None:
 			self.length = random.choice(length)
 		else:
