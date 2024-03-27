@@ -7,7 +7,7 @@ from keys import Key
 app = Flask(__name__)
 
 app.secret_key = "secret key"
-app.config['SERVER_NAME'] = '127.0.0.1:5000'
+SERVER_NAME = '172.17.88.224:5000'
 ip_key = "d6011f0bfe1b31c177948912cf0b51da"
 @app.route("/get_ip",methods=["POST"])
 def get_ip():
@@ -16,10 +16,16 @@ def get_ip():
     details = json.loads(details.content)
     return json.dumps({'address':ip_address,"detail":details})
 
-@app.route("/scripts/js/<id>",methods=["GET","POST"])
+@app.route("/api/trackAnalysis",methods=["POST"])
+def track_analysis():
+    if request.method == 'POST':
+        print(request.form)
+    return {}
+
+@app.route("/scripts/js/<id>.js",methods=["GET","POST"])
 def getScript(id):
     id = id
-    url = app.config['SERVER_NAME']
+    url = SERVER_NAME
     application = getApp(id)
     if application is False:
         return {"error": "App not found",'code':404}

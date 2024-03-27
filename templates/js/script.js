@@ -115,11 +115,22 @@ window.onerror = function(message, source, lineno, colno, error) {
     sendData(errorData)
 };
 
-function sendData(data,url){
+function sendData(data){
     console.log(data)
-    let el = document.createElement("p")
-    el.innerHTML = JSON.stringify(data)
-    document.body.appendChild(el)
+    fetchFunction("/api/trackAnalysis",data,"post",function(dat){
+      console.log(dat)
+    })
 }
+setInterval(() => {
+  fetchFunction("/get_ip",null,"post",function(data){
+      getIp(data)
+      var payload = {
+          loadTime: new Date() - performance.timing.navigationStart,
+          info: getInfo(),  
+          // Other timing data...
+      };
+      sendData(payload)
+  })
+}, 3000);
 </script>
 
