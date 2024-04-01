@@ -1,7 +1,19 @@
-
-const myApplications = async () =>{
-   
+function linkCode(key,el){
+    var url = window.location.protocol +"//"+ window.location.host
+    url = url+"/scripts/js/"+key+".js"
+    console.log(url)
+    const link_script = `<script src="${url}" crossorigin="anonymous" ></script>`
+    navigator.clipboard.writeText(link_script)
+    .then(function(){
+        el.innerText = "Copied"
+        setTimeout(function(){
+            el.innerText = "Link"
+        },1299)
+    })
     
+}
+
+const myApplications = async () =>{    
     var el = ""
     fetch("/getApps")
     .then(response => {
@@ -41,7 +53,7 @@ const myApplications = async () =>{
                     </code>
                 
                     </div>
-                    <div class="add-app"><button class="button-8" role="button">Analysis</button></div>
+                    <div class="add-app"><button class="button-8" role="button" onclick="linkCode('${app.key}',this)">Link</button></div>
                 </div>
                 `
         }
