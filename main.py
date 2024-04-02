@@ -108,8 +108,8 @@ def getScript(id):
 
 @app.route("/")
 def landing():
-    return redirect("login")
-    #return render_template("user.html")
+    #return redirect("login")
+    return render_template("landing.html")
 
 @app.route('/track', methods=['POST'])
 def track():
