@@ -2,7 +2,7 @@ function linkCode(key,el){
     var url = window.location.protocol +"//"+ window.location.host
     url = url+"/scripts/js/"+key+".js"
     console.log(url)
-    const link_script = `<script src="${url}" crossorigin="anonymous" ></script>`
+    const link_script = `<script src="${url}"  ></script>`
     navigator.clipboard.writeText(link_script)
     .then(function(){
         el.innerText = "Copied"
