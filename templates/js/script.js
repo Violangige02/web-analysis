@@ -1,9 +1,9 @@
-<script>
+
 var appurl = '{{url}}'
 if(!appurl.includes('http')){
     appurl = 'http://'+appurl
 }
-async function fetchFunction(apiUrl,payload, method,nextFunction) {
+async function aappFetchFunction(apiUrl,payload, method,nextFunction) {
     try {
 
       const appkey = '{{id}}'
@@ -36,7 +36,7 @@ let dt = JSON.stringify({{application}})
 
 const application = JSON.parse(dt)
 
-var ip_address = {}
+var ip_address = null
 var ip_info = {}
 const ip_key = "d6011f0bfe1b31c177948912cf0b51da"
 
@@ -57,7 +57,7 @@ function getInfo(){
     var userAgent = navigator.userAgent;
     var screenResolution = window.screen.width + "x" + window.screen.height;
     var timezoneOffset = new Date().getTimezoneOffset();
-    fetchFunction("/get_ip",null,"post",getIp)
+    var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
     return {
         ip_address: ip_address,
         ip_detail: ip_info,
@@ -73,11 +73,26 @@ function getInfo(){
         browser: navigator.appName,
         browserversion:navigator.appVersion,
         viewport: window.innerWidth + "x" + window.innerHeight,
+        isTouchDevice:isTouchDevice,
     }
 }
+var startTime = new Date().getTime();
 
 window.addEventListener('load', function() {
-    fetchFunction("/get_ip",null,"post",function(data){
+    
+      window.onbeforeunload = function() {  
+          var endTime = new Date().getTime();
+          
+          var duration = endTime - startTime;
+          var payload = {
+              loadTime: new Date() - performance.timing.navigationStart,
+              info: getInfo(),
+              duration:duration,
+          };
+          sendData(payload)
+         
+      };
+    aappFetchFunction("/get_ip",null,"post",function(data){
         getIp(data)
         var payload = {
             loadTime: new Date() - performance.timing.navigationStart,
@@ -90,12 +105,15 @@ window.addEventListener('load', function() {
 });
 
 window.addEventListener('popstate', function(event) {
-     fetchFunction("/get_ip",null,"post",function(data){
+     var endTime = new Date().getTime();
+          
+     var duration = endTime - startTime;
+     aappFetchFunction("/get_ip",null,"post",function(data){
         getIp(data)
         var payload = {
             loadTime: new Date() - performance.timing.navigationStart,
             info: getInfo(),
-            // Other timing data...
+            duration:duration,
         };
         sendData(payload)
     })
@@ -104,33 +122,48 @@ window.addEventListener('popstate', function(event) {
 
 // Error tracking
 window.onerror = function(message, source, lineno, colno, error) {
+    var endTime = new Date().getTime();
+          
+    var duration = endTime - startTime;
     var errorData = {
         message: message,
         source: source,
         lineno: lineno,
         colno: colno,
         error: error,
+        loadTime: new Date() - performance.timing.navigationStart,
         info:getInfo(),
+        duration:duration,
     };
     sendData(errorData)
 };
 
 function sendData(data){
-    console.log(data)
-    fetchFunction("/api/trackAnalysis",data,"post",function(dat){
+    //data = JSON.stringify(data)
+    if(ip_address === null){
+      aappFetchFunction("/get_ip",null,"post",function(data){
+          getIp(data)
+          var payload = {
+              loadTime: new Date() - performance.timing.navigationStart,
+              info: getInfo(),
+              duration:duration,
+          };
+          sendData(payload)
+      })
+      return
+    }
+    aappFetchFunction("/api/trackAnalysis",data,"post",function(dat){
       console.log(dat)
     })
 }
+aappFetchFunction("/get_ip",null,"post",function(data){
+  getIp(data)
+})
 setInterval(() => {
-  fetchFunction("/get_ip",null,"post",function(data){
-      getIp(data)
       var payload = {
           loadTime: new Date() - performance.timing.navigationStart,
           info: getInfo(),  
           // Other timing data...
       };
-      sendData(payload)
-  })
-}, 3000);
-</script>
-
+      sendData(JSON.stringify(payload))
+}, 30000);

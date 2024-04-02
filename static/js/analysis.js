@@ -1,4 +1,19 @@
-function analysisDashboard(){
+function analysisDashboard(data){
+	console.log(data)
+	let date = new Date().toUTCString()
+	function pageViews(data){
+		var el = ""
+		for(var dt of data){
+			el += `
+			<tr>
+				<td class="text-primary"><a class="link">${dt[0]}</a></td>
+				<td>${dt[1]}</td>
+				
+			</tr>
+			`
+		}
+		return el
+	}
     return `
     <div class="content-wrapper">
             <div class="content">
@@ -14,44 +29,36 @@ function analysisDashboard(){
                                   <div class="card-header justify-content-between py-5">
                                     <h2>User Activity</h2>
                                     <div class="date-range-report ">
-                                      <span>Mar 10, 2024 - Mar 10, 2024</span>
+                                      <span>${date}</span>
                                     </div>
                                   </div>
                                   <ul class="nav nav-tabs nav-style-border justify-content-between justify-content-xl-start border-bottom" role="tablist">
                                     <li class="nav-item">
                                       <a class="nav-link active pb-md-0" data-toggle="tab" href="#user" role="tab" aria-controls="" aria-selected="true">
                                         <span class="type-name">User</span>
-                                        <h4 class="d-inline-block mr-2 mb-3">5248</h4>
-                                        <span class="text-success ">5%
-                                          <i class="fas fa-arrow-up-bold"></i>
-                                        </span>
+                                        <h4 class="d-inline-block mr-2 mb-3">${data.users}</h4>
+                                       
                                       </a>
                                     </li>
                                     <li class="nav-item">
                                       <a class="nav-link pb-md-0" data-toggle="tab" href="#session" role="tab" aria-controls="" aria-selected="false">
                                         <span class="type-name">Sessions</span>
-                                        <h4 class="d-inline-block mr-2 mb-3">638</h4>
-                                        <span class="text-success ">20%
-                                          <i class="fas fa-arrow-up-bold"></i>
-                                        </span>
+                                        <h4 class="d-inline-block mr-2 mb-3">${data.sessions}</h4>
+                                       
                                       </a>
                                     </li>
                                     <li class="nav-item">
                                       <a class="nav-link pb-md-0" data-toggle="tab" href="#bounce" role="tab" aria-controls="" aria-selected="false">
                                         <span class="type-name">Bounce Rate</span>
-                                        <h4 class="d-inline-block mr-2 mb-3">36.9%</h4>
-                                        <span class="text-danger ">7%
-                                          <i class="fas fa-arrow-down-bold"></i>
-                                        </span>
+                                        <h4 class="d-inline-block mr-2 mb-3">${data.bounce}</h4>
+                                       
                                       </a>
                                     </li>
                                     <li class="nav-item">
                                       <a class="nav-link pb-md-0" data-toggle="tab" href="#session-duration" role="tab" aria-controls="" aria-selected="false">
                                         <span class="type-name">Session Duration</span>
-                                        <h4 class="d-inline-block mr-2 mb-3">4m 49s</h4>
-                                        <span class="text-success ">15%
-                                          <i class="fas fa-arrow-up-bold"></i>
-                                        </span>
+                                        <h4 class="d-inline-block mr-2 mb-3">${data.duration}</h4>
+                                       
                                       </a>
                                     </li>
                                   </ul>
@@ -72,8 +79,7 @@ function analysisDashboard(){
                                   <div class="card-header pt-5 flex-column align-items-start">
                                     <h4 class="text-dark mb-4">Current Users</h4>
                                     <div class="mb-3 current-users-content">
-                                      <p class="my-2">Ave Page views per minute</p>
-                                      <h4>09</h4>
+                                      
                                     </div>
                                   </div>
                                   <div class="border-bottom"></div>
@@ -92,39 +98,7 @@ function analysisDashboard(){
 			</div>
 
 			<div class="row">
-				<div class="col-xl-6 col-12">
-					                        
-                          <!-- User Acquisition Statistics -->
-                          <div class="card card-default" id="user-acquisition">
-                            <div class="card-header justify-content-between pb-5">
-                              <h2>User Acquisition</h2>
-                            </div>
-
-                            <ul class="nav nav-tabs nav-style-border justify-content-between justify-content-lg-start border-bottom" role="tablist">
-                              <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#traffic-channel" role="tab" aria-controls="" aria-selected="true">Traffic Channel</a>
-                              </li>
-                              <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#source-medium" role="tab" aria-controls="" aria-selected="false">Source / Medium </a>
-                              </li>
-                              <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#referrals" role="tab" aria-controls="" aria-selected="false">Referrals</a>
-                              </li>
-                            </ul>
-                            <div class="tab-content p-3 p-lg-5" id="myTabContent">
-                              <div class="tab-pane fade show active pb-4" id="source-medium" role="tabpanel" aria-labelledby="profile-tab">
-                                <div class="mb-5" style=" height:32vh"><div class="chartjs-size-monitor" style="position: absolute; inset: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
-                                  <canvas id="acquisition" class="chartjs2 chartjs-render-monitor" width="384" height="133" style="display: block; width: 384px; height: 133px;"></canvas>
-                                  <div id="acqLegend" class="customLegend mb-2"><ul class="1-legend"><li><span style="background-color:rgb(76, 132, 255)"></span>Referral</li><li><span style="background-color:rgb(254, 196, 0)"></span>Direct</li><li><span style="background-color:rgb(41, 204, 151)"></span>Social</li></ul></div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="card-footer d-flex flex-wrap bg-white">
-                              <a href="#" class="text-uppercase py-3">Audience Overview</a>
-                            </div>
-                          </div>
-
-				</div>
+				
 
 				<div class="col-xl-6 col-12">
 					
@@ -180,8 +154,8 @@ function analysisDashboard(){
 									<div class="card card-icon-info text-center border-0">
 										<i class="fa-solid fa-desktop"></i>
 										<p class="pt-3 pb-1">Desktop</p>
-										<h4 class="text-dark pb-1">60.0%</h4>
-										<span class="text-danger">1.5% <i class="fas fa-arrow-down-bold"></i></span>
+										<h4 class="text-dark pb-1">${(data.device.desktop/data.device.total)*100}</h4>
+										
 									</div>
 								</div>
 
@@ -189,8 +163,8 @@ function analysisDashboard(){
 									<div class="card card-icon-info text-center border-0">
 									<i class="fa-solid fa-tablet"></i>	
 										<p class="pt-3 pb-1">Tablet</p>
-										<h4 class="text-dark pb-1">15.0%</h4>
-										<span class="text-success">1.5% <i class="fas fa-arrow-up-bold"></i></span>
+										<h4 class="text-dark pb-1">${(data.device.tablet/data.device.total)*100}</h4>
+										
 									</div>
 								</div>
 
@@ -198,8 +172,8 @@ function analysisDashboard(){
 									<div class="card card-icon-info text-center border-0">
 									<i class="fa-solid fa-mobile"></i>
 										<p class="pt-3 pb-1">Mobile</p>
-										<h4 class="text-dark pb-1">25.0%</h4>
-										<span class="text-success">1.5% <i class="fas fa-arrow-up-bold"></i></span>
+										<h4 class="text-dark pb-1">${(data.device.mobile/data.device.total)*100}%</h4>
+										
 									</div>
 								</div>
 							</div>
@@ -214,7 +188,7 @@ function analysisDashboard(){
 							<h2>Page Views</h2>
 
 							<div class="date-range-report ">
-								<span>Mar 11, 2024 - Mar 11, 2024</span>
+								<span>${date}</span>
 							</div>
 						</div>
 
@@ -229,53 +203,8 @@ function analysisDashboard(){
 								</thead>
 
 								<tbody>
-									<tr>
-										<td class="text-primary"><a class="link" href="analytics.html">/analytics.html</a></td>
-										<td>521</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="email-inbox.html">/email-inbox.html</a></td>
-										<td>356</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="email-compose.html">/email-compose.html</a></td>
-										<td>254</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="charts-chartjs.html">/charts-chartjs.html</a></td>
-										<td>126</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="profile.html">/profile.html</a></td>
-										<td>50</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="general-widgets.html">/general-widgets.html</a></td>
-										<td>50</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="card.html">/card.html</a></td>
-										<td>590</td>
-										
-									</tr>
-
-									<tr>
-										<td class="text-primary"><a class="link" href="email-inbox.html">/email-inbox.html</a></td>
-										<td>29</td>
-										
-									</tr>
+									
+									${pageViews(data.page_views)}
 								</tbody>
 							</table>
 						</div>
@@ -314,7 +243,7 @@ function analysisDashboard(){
 
 								<div class="media-body pr-3 ">
 									<a class="mt-0 mb-1 font-size-15 text-dark" href="#">Info</a>
-									<p>zYour account is on free trial</p>
+									<p>Your account is on free trial</p>
 								</div>
 								<span class=" font-size-12 d-inline-block"><i class="fas fa-clock-outline"></i> 10 AM</span>
 							</div>
@@ -361,10 +290,10 @@ const chartFunction = (id,labels,data) =>{
 	return true
 }
 
-const barChart= (id,labels) =>{
+const barChart= (id,data) =>{
 	console.log("in")
-	var xValues = ["Jan","Feb","March","April","May","June"];
-	var yValues = [60, 15, 25,34,65,56];
+	var xValues = ["Jan","Feb","March","April","May","June","July","August","Sept","Oct","Nov","Dec"];
+	var yValues = data
 	var barColors = "#28282B";
 
 	new Chart(id, {
@@ -386,29 +315,29 @@ const barChart= (id,labels) =>{
 	return true
 }
 
-const lineChart = (id,labels) =>{
+const lineChart = (id,data) =>{
 	console.log("in")
-	const xValues = labels ? labels :[1,2,3,4,5,6,7,8,9,10];
+	const xValues = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
 	new Chart(id, {
 	type: "line",
 		data: {
 			labels: xValues,
 			datasets: [{
-			data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
+			data:data[0],
 			borderColor: "red",
 			fill: false,
-			title:"Direct"
+			title:"Users"
 			},{
-			data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
+			data: data[1],
 			borderColor: "green",
 			fill: false,
-			title:"Refferal"
+			title:"Sessions"
 			},{
-			data: [1600,1700,1700,1900,200,2700,400,500,6000,700],
+			data: data[2],
 			borderColor: "green",
 			fill: false,
-			title:"Social"
+			title:"Bounce"
 			}]
 		},
 		options: {
@@ -418,10 +347,10 @@ const lineChart = (id,labels) =>{
 	return true
 }
 
-const roundedChart = (id,labels) =>{
+const roundedChart = (id,labels,data) =>{
 	console.log("in")
-	const xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-	const yValues = [55, 49, 44, 24, 15];
+	const xValues = labels;
+	const yValues = data;
 	const barColors = ["red", "green","blue","orange","brown"];
 	new Chart(id, {
 		type: "doughnut",

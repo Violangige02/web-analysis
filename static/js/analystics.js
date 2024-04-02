@@ -1,17 +1,20 @@
-function appAnalysis(body,data){
+function appAnalysis(data){
+    document.getElementById("analysis").innerHTML = ''
+    console.log(data.app)
 	if(data === null || data === undefined){
 		console.warn("Invalid data")
 	}
-	body.innerHTML += `<br><br>
+    var date = new Date().toUTCString()
+	document.getElementById("analysis").innerHTML += `<br><br>
 		<div class="row">
 		<div class="card card-default" id="user-activity">
 		<div class="row no-gutters">
             <div class="col-xl-8">
                 <div class="border-right">
                 <div class="card-header justify-content-between py-5">
-                    <h2>App Engagement</h2>
+                    <h2>App Engagement {${data.app.name}}</h2>
                     <div class="date-range-report ">
-                    <span>Mar 10, 2024 - Mar 10, 2024</span>
+                    <span>${date}4</span>
                     </div>
                 </div>
                 <ul class="nav nav-tabs nav-style-border justify-content-between justify-content-xl-start border-bottom" role="tablist">
@@ -19,7 +22,7 @@ function appAnalysis(body,data){
                     <a class="nav-link active pb-md-0" data-toggle="tab" href="#user" role="tab" aria-controls="" aria-selected="true">
                         <span class="type-name">Total Api Calls</span>
         
-                        <span class="text-success ">5100
+                        <span class="text-success ">${data.total}
                         <i class="fas fa-arrow-up-bold"></i>
                         </span>
                     </a>
@@ -28,7 +31,7 @@ function appAnalysis(body,data){
                     <a class="nav-link pb-md-0" data-toggle="tab" href="#session" role="tab" aria-controls="" aria-selected="false">
                         <span class="type-name">Successful responses</span>
 
-                        <span class="text-success ">4200
+                        <span class="text-success ">${data.total -data.failed}
                         <i class="fas fa-arrow-up-bold"></i>
                         </span>
                     </a>
@@ -37,7 +40,7 @@ function appAnalysis(body,data){
                     <a class="nav-link pb-md-0" data-toggle="tab" href="#session" role="tab" aria-controls="" aria-selected="false">
                         <span class="type-name">Error responses</span>
 
-                        <span class="text-success ">1100
+                        <span class="text-success ">${data.error}
                         <i class="fas fa-arrow-up-bold"></i>
                         </span>
                     </a>
@@ -104,19 +107,24 @@ function appAnalysis(body,data){
 	</div>
 	`
     appMetrics("appmetrics")
-    apiActivity("apiactivity",[])
-    chartFunction("responseChart",["More than 10 seconds","5 - 10 seconds","Less than 5 seconds"],[35.3,41.7,23.5])
+    var loadTime = data.loadTime
+    
+    console.log(loadTime)
+    apiActivity("apiactivity",loadTime)
+    
+    chartFunction("responseChart",["More than 10 seconds","5 - 10 seconds","Less than 5 seconds"],[data.response.above,data.response.mid,data.response.below])
 }
 
 function appMetrics(id){
     fetchFunction("/getApps",function(data){
+        document.getElementById(id).innerHTML = ""
         for(const app of data.apps){
             document.getElementById(id).innerHTML += `
                 <tr>
                     <th scope="row">1</th>
                     <td>${app.name}</td>
-                    <td>1000</td>
-                    <td>10</td>
+                    <td>${app.count}</td>
+                    <td>${app.failed}</td>
                 </tr>
         
             `
@@ -125,14 +133,19 @@ function appMetrics(id){
 }
 
 function apiActivity(id,data){
-    const xValues = [1,2,3,4,5,6,7,8,9,10];
+    const xValues = [];
+    let x = 0
+    for(var i of data){
+        x+=1
+        xValues.push(x)
+    }
 
 	new Chart(id, {
 	type: "line",
 		data: {
 			labels: xValues,
 			datasets: [{
-			data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
+			data: data,
 			borderColor: "#23232b",
 			fill: false,
 			title:"Direct"

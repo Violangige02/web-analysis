@@ -1,26 +1,66 @@
 from flask import Flask,render_template, request, session, jsonify,redirect
-from db import Login,Register,createApp,getApps,getApp
+from db import Login,Register,createApp,getApps,getApp,trackApp,appAnalysis
 import json
 import requests
 from keys import Key
+from flask_cors import CORS
+import json
+
 
 app = Flask(__name__)
+CORS(app)
 
 app.secret_key = "secret key"
-SERVER_NAME = '172.17.88.224:5000'
+SERVER_NAME = 'http://localhost:5000'
 ip_key = "d6011f0bfe1b31c177948912cf0b51da"
-@app.route("/get_ip",methods=["POST"])
+@app.route("/get_ip",methods=["POST","GET"])
 def get_ip():
     ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
     details = requests.get("http://api.ipstack.com/"+ip_address+"?access_key="+ip_key)
     details = json.loads(details.content)
+    #print(details)
     return json.dumps({'address':ip_address,"detail":details})
+
+@app.route("/api/getAnalysis")
+def myAnalysis():
+    if session.get("user") == None:
+        return redirect("logout")
+    result = []
+    res = getApps(session.get("user"))
+    for app in res:
+        analysis = appAnalysis(app=app['key'])
+        result.append(analysis)
+    result = json.loads(json.dumps(result,default=str))
+    return jsonify(result)
+
+@app.route("/api/trackAnalysis/<string:id>",methods=["POST","GET"])
+def get_analysis(id):
+    app = id
+    result = getApp(app)
+    if result == False:
+        return jsonify({message:"App not found"})
+    
+    analysis = appAnalysis(app=app)
+    analysis = json.loads(json.dumps(analysis,default=str))
+    print(result)
+    return jsonify(analysis)
 
 @app.route("/api/trackAnalysis",methods=["POST"])
 def track_analysis():
-    if request.method == 'POST':
-        print(request.form)
-    return {}
+    headers = request.headers
+    app_key = headers.get('x-auth-token')
+    print(app_key)
+    if request.json:
+        
+        data = request.json
+        try:
+            data = json.loads(data)
+        except Exception as e:
+            pass
+     
+        if data.get("info"):
+            trackApp(app=app_key,data=data)
+    return jsonify({})
 
 @app.route("/scripts/js/<id>.js",methods=["GET","POST"])
 def getScript(id):
@@ -30,7 +70,8 @@ def getScript(id):
     if application is False:
         return {"error": "App not found",'code':404}
     application = json.dumps(application, default=str)
-    return render_template("js/script.js",**locals())
+    rendered_script = render_template("js/script.js",**locals())
+    return rendered_script, 200, {'Content-Type': 'text/javascript'}
 
 @app.route("/")
 def landing():
