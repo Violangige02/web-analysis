@@ -191,11 +191,41 @@ function adminAnalystics(){
     
 }
 
-function adminSettings(){
+function requestTable(datas){
+    let el = ""
+    for(var data of datas){
+        
+        el += `
+        <tr onclick="detailModal('${data._id}')" data-target="#detailModal" data-toggle="modal">
+            <td>${data.ip}</td>
+            <td>${data.country ?data.country : "Localhost"}</td>
+        </tr>
+        `
+    }
+    return el
+}
+
+function adminRequests(){
+    fetchFunction("/api/get_requests",function(data){
+        console.log(data)
+        document.getElementById("requestList").innerHTML = requestTable(data)
+    })
     const body = document.getElementById("main")
     body.innerHTML = `
     <div class="pt-3 pb-2 mb-3 border-bottom">
-        <h2>Admin Settings</h2>
+        <h2>All Requests</h2>
     </div>
+    <div class="">
+        <input  class="form-control" placeholder="query IP" id="myInput" onkeyup="myFunction()+">
+    </div>
+    <table id="myTable">
+    <tr class="header">
+        <th style="width:60%;">Ip Address</th>
+        <th style="width:40%;">Country</th>
+    </tr>
+    <tbody id="requestList">
+        
+    </tbody>
+    </table>
     `
 }

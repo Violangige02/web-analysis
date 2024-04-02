@@ -1,19 +1,42 @@
+function getLatest(){
+	fetchFunction("/api/latest",function(data){
+		//console.log(data)
+		var el = ""
+		for(var key in data){
+			el += `<p><a href="javascript:void(0)">${key}</a> : ${data[key]} </p>`
+		}
+		document.getElementById("latestRequest").innerHTML = `
+			<div>
+				<h5>${data.app}</h5>
+				<p>{
+					${el}
+				}</p>
+			</div>
+		`
+	})
+}
+
 function analysisDashboard(data){
 	console.log(data)
 	let date = new Date().toUTCString()
 	function pageViews(data){
 		var el = ""
 		for(var dt of data){
+			var e = dt[0].split("/")
+			e = e[e.length-1]
 			el += `
 			<tr>
-				<td class="text-primary"><a class="link">${dt[0]}</a></td>
-				<td>${dt[1]}</td>
+				<td class="text-primary" style="max-width: 55%;overflow:hidden;"><a class="link">${e}</a></td>
+				<td>${dt[1] ?dt[1] > 0 : 1}</td>
 				
 			</tr>
 			`
 		}
 		return el
 	}
+	setInterval(function(){
+		getLatest()
+	},2999)
     return `
     <div class="content-wrapper">
             <div class="content">
@@ -57,7 +80,7 @@ function analysisDashboard(data){
                                     <li class="nav-item">
                                       <a class="nav-link pb-md-0" data-toggle="tab" href="#session-duration" role="tab" aria-controls="" aria-selected="false">
                                         <span class="type-name">Session Duration</span>
-                                        <h4 class="d-inline-block mr-2 mb-3">${data.duration}</h4>
+                                        <h4 class="d-inline-block mr-2 mb-3">${data.duration ? parseInt(data.duration) : 1}</h4>
                                        
                                       </a>
                                     </li>
@@ -219,7 +242,7 @@ function analysisDashboard(data){
 					<!-- Notification Table -->
 					<div class="card card-default">
 						<div class="card-header justify-content-between">
-							<h2>Latest Notifications</h2>
+							<h2>Latest Request</h2>
 
 							<div>
 								<button class="text-black-50 mr-2 font-size-20"><i class="fas fa-cached"></i></button>
@@ -227,23 +250,21 @@ function analysisDashboard(data){
 								<div class="dropdown show d-inline-block widget-dropdown">
 									<a class="dropdown-toggle icon-burger-mini" href="#" role="button" id="dropdown-notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static"></a>
 									<ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-notification">
-										<li class="dropdown-item"><a href="#">Action</a></li>
-										<li class="dropdown-item"><a href="#">Another action</a></li>
-										<li class="dropdown-item"><a href="#">Something else here</a></li>
+										<li class="dropdown-item"><a href="#requests">All Requests</a></li>
+										<li class="dropdown-item"><a href="javascript:void(0)" onclick="getLatest()">Reload</a></li>
 									</ul>
 								</div>
 							</div>
 						</div>
 
-						<div class="card-body py-4" data-simplebar="" style="height: 475px;">
+						<div class="card-body py-4" data-simplebar="" style="height: 475px;overflow:auto;">
 							<div class="media pb-4 align-items-center justify-content-between">
 								<div class="d-flex rounded-circle align-items-center justify-content-center mr-3 media-icon iconbox-45 bg-primary text-white">
 									<i class="fas fa-cart-outline font-size-20"></i>
 								</div>
 
-								<div class="media-body pr-3 ">
-									<a class="mt-0 mb-1 font-size-15 text-dark" href="#">Info</a>
-									<p>Your account is on free trial</p>
+								<div class="media-body pr-3 " id="latestRequest" >
+									
 								</div>
 								<span class=" font-size-12 d-inline-block"><i class="fas fa-clock-outline"></i> 10 AM</span>
 							</div>

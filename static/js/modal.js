@@ -25,6 +25,7 @@ const addModal = (id)=>{
 
 $(document).ready(function(){
 	document.body.innerHTML += addModal("appModal")
+	document.body.innerHTML += addModal("detailModal")
 })
 
 function appModal(){
@@ -56,4 +57,25 @@ function appModal(){
 	el[0].innerHTML = html
 	el[0].setAttribute("style","max-height:456px;overflow:auto;")
 	body.setAttribute("style","min-width:456px;")
+}
+
+function detailModal(id){
+	fetchFunction("/api/request/"+id,function(data){
+		console.log(data,id)
+		var ed = ""
+		for(var key in data){
+			ed += `<p><a href="javascript:void(0)">${key}</a> : ${data[key]} </p>`
+		}
+		document.getElementById("requestDetail").innerHTML = ed
+		
+	})
+	const body =document.getElementById("detailModal");
+	const title = body.getElementsByClassName("modal-title")
+	const el = body.getElementsByClassName("modal-body")
+	title[0].innerHTML = "Request Detail"
+	el[0].innerHTML = ''
+	el[0].setAttribute("style","max-height:456px;overflow:auto;")
+	el[0].setAttribute("id","requestDetail")
+	body.setAttribute("style","min-width:456px;")
+	
 }

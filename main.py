@@ -1,11 +1,11 @@
 from flask import Flask,render_template, request, session, jsonify,redirect
-from db import Login,Register,createApp,getApps,getApp,trackApp,appAnalysis
+from db import Login,Register,createApp,getApps,getApp,trackApp,appAnalysis,getRequests,getRequest
 import json
 import requests
 from keys import Key
 from flask_cors import CORS
 import json
-
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -42,8 +42,41 @@ def get_analysis(id):
     
     analysis = appAnalysis(app=app)
     analysis = json.loads(json.dumps(analysis,default=str))
-    print(result)
+    
     return jsonify(analysis)
+
+@app.route("/api/request/<string:id>")
+def get_request(id):
+    headers = request.headers
+    result = getRequest(id)
+    
+    if result:
+        result = json.loads(json.dumps(result,default=str))
+    return jsonify(result)
+
+@app.route("/api/get_requests")
+def get_requests():
+    headers = request.headers
+    apps = getApps(session.get("user"))
+    res = []
+    for ap in apps:
+        re = getRequests(ap['key'])
+        
+        res.append(re[0])
+    
+    res = json.loads(json.dumps(res,default=str))
+    return jsonify(res)
+
+@app.route("/api/latest")
+def get_latest():
+    headers = request.headers
+    apps = getApps(session.get("user"))
+    app_key = random.choice(apps) if len(apps) > 0 else None
+    app_key = app_key["key"]
+    res = trackApp(app=app_key,latest=True)
+    res = json.loads(json.dumps(res,default=str))
+    #print(res,app_key)
+    return jsonify(res)
 
 @app.route("/api/trackAnalysis",methods=["POST"])
 def track_analysis():

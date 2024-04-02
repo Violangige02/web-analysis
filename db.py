@@ -1,6 +1,7 @@
 import pymongo
 from datetime import datetime
 import json
+from bson import ObjectId
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 
 mydb = myclient["net_analysis"]
@@ -10,9 +11,9 @@ def parse_user_agent(user_agent):
         return 'Mobile Device'
     elif 'Tablet' in user_agent:
         return 'Tablet Device'
-    elif 'Windows Desktop' in user_agent:
+    elif 'Windows' in user_agent:
         return 'Windows Desktop'
-    elif 'Macintosh Desktop' in user_agent:
+    elif 'Macintosh' in user_agent:
         return 'Mac Desktop'
     else:
         return 'Unknown Device'
@@ -83,12 +84,12 @@ class myDB:
             ip = ip
             app = app
             ip_detail = data["ip_address"]["detail"]
-            country_code = ip_detail["country_code"]
-            country = ip_detail["country_name"]
-            city = ip_detail["city"]
-            page_url = data["pageUrl"]
-            page_title = data["pageTitle"]
-            page_referrer = data["referrer"]
+            country_code = ip_detail.get("country_code")
+            country = ip_detail.get("country_name")
+            city = ip_detail.get("city")
+            page_url = data.get("pageUrl")
+            page_title = data.get("pageTitle")
+            page_referrer = data.get("referrer")
             pathname = data["pathname"]
             agent = data["userAgent"]
             os = data["os"]
@@ -135,6 +136,21 @@ class myDB:
         if x:
             y = self.track.find_one({'app':key})
             
+        return x
+    def get_last(self,key):
+        y = self.track.find_one({'app':key})
+        #print("last",y,key)
+        return y
+    def get_requests(self,key):
+        x = self.track.find({'app':key})
+        ips = []
+        for i in x:
+            ips.append(i)
+        return ips
+    def get_request(self,id):
+        id = ObjectId(id)
+        x = self.track.find_one({'_id':id})
+        
         return x
     def track_app(self,app=None,period=None,ip=None):
         app_data = self.get_app(app)
@@ -196,6 +212,16 @@ def getApps(user):
         return result
     return []
 
+def getRequests(app):
+    db = myDB()
+    res = db.get_requests(app)
+    return res
+
+def getRequest(id):
+    db = myDB()
+    res = db.get_request(id)
+    return res
+
 def getApp(id):
     db = myDB()
     result = db.get_app(id)
@@ -226,7 +252,13 @@ def Register(username,password,email):
     db.create_user({username:username,email:email,password:password})
     return True
     
-def trackApp(app=None,data=None):
+def trackApp(app=None,data=None,latest=None):
+    if latest:
+        db = myDB()
+        print("app",app)
+        if app:
+            res = db.get_last(app)
+            return res
     if app:
         db = myDB()
         result = db.get_app(app)

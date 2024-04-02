@@ -10,8 +10,8 @@ function handlePage(){
         case "analystics":
             adminAnalystics();
             break;
-        case "settings":
-            adminSettings()
+        case "requests":
+            adminRequests()
             break;
         default:
             adminDashboard();
