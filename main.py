@@ -72,7 +72,7 @@ def get_latest():
     headers = request.headers
     apps = getApps(session.get("user"))
     app_key = random.choice(apps) if len(apps) > 0 else None
-    app_key = app_key["key"]
+    app_key = app_key["key"] if app_key else None
     res = trackApp(app=app_key,latest=True)
     res = json.loads(json.dumps(res,default=str))
     #print(res,app_key)
@@ -109,7 +109,7 @@ def getScript(id):
 @app.route("/")
 def landing():
     #return redirect("login")
-    return render_template("landing.html")
+    return render_template("landpage.html")
 
 @app.route('/track', methods=['POST'])
 def track():

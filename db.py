@@ -4,7 +4,7 @@ import json
 from bson import ObjectId
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 
-mydb = myclient["net_analysis"]
+mydb = myclient["web_analysis"]
 
 def parse_user_agent(user_agent):
     if 'Mobile' in user_agent:
@@ -45,7 +45,7 @@ class myDB:
         x = self.apps.find_one({'user':id,'name':name})
         if x:
             return False
-        x = self.apps.insert_one({'user':id,'name':name,'key':key,'date':self.current_time()})
+        x = self.apps.insert_one({'user':id,'name':name,'key':key,'date':self.current_time(),'count':0,'failed':0})
         if x:
             return True
         return False
@@ -74,6 +74,8 @@ class myDB:
         current = self.track.find_one({
             'app':app,'ip':ip
         })
+        if not current:
+            current = self.new_ip(app,ip)
         try:
             old_data = data
             loadTime = data["loadTime"]

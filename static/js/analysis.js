@@ -24,10 +24,11 @@ function analysisDashboard(data){
 		for(var dt of data){
 			var e = dt[0].split("/")
 			e = e[e.length-1]
+			if(e === ''){e = '/'}
 			el += `
 			<tr>
 				<td class="text-primary" style="max-width: 55%;overflow:hidden;"><a class="link">${e}</a></td>
-				<td>${dt[1] ?dt[1] > 0 : 1}</td>
+				<td>${dt[1]  ? dt[1]  : 1}</td>
 				
 			</tr>
 			`
